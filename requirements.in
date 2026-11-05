@@ -1,0 +1,10 @@
+aiogram
+pydantic_settings
+loguru
+aiohttp_socks
+httpx[socks]
+langgraph
+langchain-openai
+onnx-asr[cpu,hub]
+ffmpeg-python
+pyyaml

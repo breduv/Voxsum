@@ -1,0 +1,40 @@
+services:
+  goloslov:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    container_name: goloslov
+
+    restart: unless-stopped
+
+    environment:
+      BOT_TOKEN: ${BOT_TOKEN:?Set BOT_TOKEN in .env or environment}
+      API_BASE: ${API_BASE:?Set API_BASE in .env or environment}
+      API_KEY: ${API_KEY:-}
+      LLM_MODEL: ${LLM_MODEL:?Set LLM_MODEL in .env or environment}
+      ASR_MODEL: ${ASR_MODEL:-gigaam-v3-e2e-rnnt}
+      PROXY: ${PROXY:-}
+      TG_PROXY: ${TG_PROXY:-}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      METRICS_PORT: ${METRICS_PORT:-9103}
+      TELEGRAM_HEALTH_INTERVAL_SECONDS: ${TELEGRAM_HEALTH_INTERVAL_SECONDS:-30}
+
+    volumes:
+      - "/home/gleb/goloslov/data/huggingface:/app/data/huggingface"
+
+    expose:
+      - "${METRICS_PORT:-9103}"
+
+    healthcheck:
+      test: ["CMD", "python", "-m", "app.healthcheck"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 5m
+    
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "1"
