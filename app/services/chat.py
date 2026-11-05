@@ -41,7 +41,9 @@ class ChatService:
             raise EmptyRequestError("Transcript is empty")
 
         # Each voice is independent: no conversation history or checkpoints.
-        message = HumanMessage(content=f"Кратко перескажи, о чём тут речь.\n\n{text}")
+        message = HumanMessage(
+            content=f"Кратко перескажи, о чём тут речь. Старайся не упускать детали. Ответ оформи в Markdown:\n\n{text}"
+        )
         result = await self.graph.ainvoke({"messages": [message]})
         messages = result.get("messages", [])
         if not messages or not isinstance(messages[-1], AIMessage):
