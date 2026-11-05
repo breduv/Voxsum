@@ -19,7 +19,7 @@ services:
       LOG_LEVEL: ${LOG_LEVEL:-INFO}
 
     volumes:
-      - "./data/huggingface:/app/data/huggingface"
+      - "${HF_CACHE_DIR:-./data/huggingface}:/app/data/huggingface"
     
     logging:
       driver: json-file

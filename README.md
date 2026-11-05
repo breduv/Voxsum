@@ -79,9 +79,12 @@ The mention by itself is enough. Extra text after the mention has no effect on t
 | `LLM_MODEL` | yes | — | Exact model ID at the provider |
 | `API_KEY` | if required by the provider | — | LLM API key |
 | `ASR_MODEL` | no | `gigaam-v3-e2e-rnnt` | Local speech model. Also accepts `gigaam-v3-e2e-ctc` |
+| `HF_CACHE_DIR` | no | `./data/huggingface` | Host directory for the model cache when using Docker Compose |
 | `PROXY` | no | — | Proxy for the LLM API |
 | `TG_PROXY` | no | — | Proxy for the Telegram Bot API |
 | `LOG_LEVEL` | no | `INFO` | `DEBUG`, `INFO`, `WARNING`, `ERROR`, or `CRITICAL` |
+
+Docker Compose mounts the cache directory at `/app/data/huggingface` in the container. To reuse models you already downloaded, set `HF_CACHE_DIR=/path/to/existing/cache` in `.env`. The default directory is relative to the project root.
 
 Leave unused proxies empty. With Compose, `API_BASE` must be reachable from inside the container, where `127.0.0.1` points to the bot container itself.
 
