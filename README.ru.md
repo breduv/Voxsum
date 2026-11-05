@@ -2,7 +2,7 @@
 
 [English](README.md) · **Русский**
 
-# Goloslov
+# Voxsum
 
 **Краткие сводки голосовых сообщений в Telegram**
 
@@ -13,7 +13,7 @@
 ![Docker](https://img.shields.io/badge/Docker-ready-2496ED?logo=docker&logoColor=white)
 
 Отправьте или перешлите голосовое боту либо упомяните его в ответе на голосовое.
-Goloslov распознает речь локально и пришлёт краткий пересказ в Telegram.
+Voxsum распознаёт речь локально и присылает краткий пересказ в Telegram.
 
 [Возможности](#возможности) · [Быстрый старт](#быстрый-старт) · [Использование](#использование) · [Настройки](#настройки)
 
@@ -45,8 +45,7 @@ Goloslov распознает речь локально и пришлёт кра
    # Укажите API_KEY, если провайдер требует авторизацию.
    ```
 
-2. В [`docker-compose.yml`](docker-compose.yml) укажите путь к кэшу моделей на своём хосте. Путь внутри контейнера — `/app/data/huggingface`.
-3. Запустите бота из корня проекта.
+2. Запустите бота из корня проекта.
 
    ```bash
    docker compose up -d --build
@@ -123,7 +122,7 @@ Copy-Item .env.example .env
 
 ```bash
 # Следить за логами бота
-docker compose logs -f --tail=100 goloslov
+docker compose logs -f --tail=100 voxsum
 
 # Пересобрать после изменения кода или зависимостей
 docker compose up -d --build

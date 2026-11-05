@@ -36,9 +36,6 @@ class Settings(BaseSettings):
         "CRITICAL",
     ] = Field(default="INFO")
 
-    metrics_port: int = Field(default=9103, ge=1, le=65535)
-    telegram_health_interval_seconds: int = Field(default=30, ge=10, le=300)
-
     @field_validator("proxy", "tg_proxy", mode="before")
     @classmethod
     def empty_value_to_none(cls, value: object) -> object:

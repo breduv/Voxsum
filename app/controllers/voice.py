@@ -98,7 +98,7 @@ class VoiceController:
 
         await self.chat.ensure_available()
 
-        with TemporaryDirectory(prefix="goloslov-voice-") as directory:
+        with TemporaryDirectory(prefix="voxsum-voice-") as directory:
             audio_path = Path(directory) / "voice.ogg"
             logger.debug("Voice: downloading")
             await bot.download(voice, destination=audio_path, timeout=120)

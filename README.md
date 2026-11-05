@@ -2,7 +2,7 @@
 
 **English** · [Русский](README.ru.md)
 
-# Goloslov
+# Voxsum
 
 **Short summaries of Telegram voice messages**
 
@@ -13,7 +13,7 @@
 ![Docker](https://img.shields.io/badge/Docker-ready-2496ED?logo=docker&logoColor=white)
 
 Send or forward a voice message to the bot, or mention it in a reply to a voice message.
-Goloslov transcribes the recording locally and sends back a short summary in Telegram.
+Voxsum transcribes the recording locally and sends back a short summary in Telegram.
 
 [Features](#features) · [Quick start](#quick-start) · [Usage](#usage) · [Configuration](#configuration)
 
@@ -45,8 +45,7 @@ You need Docker Compose, a Telegram bot token from BotFather, and an API compati
    # Set API_KEY if your provider requires authentication.
    ```
 
-2. In [`docker-compose.yml`](docker-compose.yml), set the host side of the model cache mount to a path on your machine. The container path is `/app/data/huggingface`.
-3. Start the bot from the project root.
+2. Start the bot from the project root.
 
    ```bash
    docker compose up -d --build
@@ -123,7 +122,7 @@ Run commands from the project root so `.env` is found. Locally, the default mode
 
 ```bash
 # Follow bot logs
-docker compose logs -f --tail=100 goloslov
+docker compose logs -f --tail=100 voxsum
 
 # Rebuild after source or dependency changes
 docker compose up -d --build

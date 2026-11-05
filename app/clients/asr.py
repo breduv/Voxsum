@@ -19,7 +19,7 @@ class ASR:
         self.model = model.with_vad(vad)
 
     def transcribe(self, audio_path: Path) -> str:
-        with TemporaryDirectory(prefix="goloslov-asr-") as directory:
+        with TemporaryDirectory(prefix="voxsum-asr-") as directory:
             wav_path = Path(directory) / "audio.wav"
             self._decode(audio_path, wav_path)
 

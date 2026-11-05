@@ -1,10 +1,10 @@
 services:
-  goloslov:
+  voxsum:
     build:
       context: .
       dockerfile: Dockerfile
 
-    container_name: goloslov
+    container_name: voxsum
 
     restart: unless-stopped
 
@@ -17,21 +17,9 @@ services:
       PROXY: ${PROXY:-}
       TG_PROXY: ${TG_PROXY:-}
       LOG_LEVEL: ${LOG_LEVEL:-INFO}
-      METRICS_PORT: ${METRICS_PORT:-9103}
-      TELEGRAM_HEALTH_INTERVAL_SECONDS: ${TELEGRAM_HEALTH_INTERVAL_SECONDS:-30}
 
     volumes:
-      - "/home/gleb/goloslov/data/huggingface:/app/data/huggingface"
-
-    expose:
-      - "${METRICS_PORT:-9103}"
-
-    healthcheck:
-      test: ["CMD", "python", "-m", "app.healthcheck"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
-      start_period: 5m
+      - "./data/huggingface:/app/data/huggingface"
     
     logging:
       driver: json-file
