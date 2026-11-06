@@ -19,10 +19,14 @@ services:
       LOG_LEVEL: ${LOG_LEVEL:-INFO}
 
     volumes:
-      - "${HF_CACHE_DIR:-./data/huggingface}:/app/data/huggingface"
+      - voxsum_data:/app/data/huggingface
     
     logging:
       driver: json-file
       options:
         max-size: "10m"
         max-file: "1"
+
+volumes:
+  voxsum_data:
+    name: voxsum_data
