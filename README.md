@@ -30,7 +30,7 @@ Voxsum transcribes the recording locally and sends back a short summary in Teleg
 | 👋 **Guest Mode** | Request a summary in a supported chat without adding the bot |
 | ⚡ **Model availability check** | The bot checks the configured LLM before downloading or transcribing audio |
 | 🌐 **Separate proxies** | Configure connections to Telegram and the LLM API independently |
-| 🐳 **Docker Compose** | The image includes FFmpeg, and a host mount keeps the model cache across container rebuilds |
+| 🐳 **Docker Compose** | The image includes FFmpeg, and a named volume keeps the model cache across container rebuilds |
 
 ## Quick start
 
@@ -79,12 +79,11 @@ The mention by itself is enough. Extra text after the mention has no effect on t
 | `LLM_MODEL` | yes | — | Exact model ID at the provider |
 | `API_KEY` | if required by the provider | — | LLM API key |
 | `ASR_MODEL` | no | `gigaam-v3-e2e-rnnt` | Local speech model. Also accepts `gigaam-v3-e2e-ctc` |
-| `HF_CACHE_DIR` | no | `./data/huggingface` | Host directory for the model cache when using Docker Compose |
 | `PROXY` | no | — | Proxy for the LLM API |
 | `TG_PROXY` | no | — | Proxy for the Telegram Bot API |
 | `LOG_LEVEL` | no | `INFO` | `DEBUG`, `INFO`, `WARNING`, `ERROR`, or `CRITICAL` |
 
-Docker Compose mounts the cache directory at `/app/data/huggingface` in the container. To reuse models you already downloaded, set `HF_CACHE_DIR=/path/to/existing/cache` in `.env`. The default directory is relative to the project root.
+Docker Compose stores the model cache in the `voxsum_data` volume, mounted at `/app/data/huggingface` in the container.
 
 Leave unused proxies empty. With Compose, `API_BASE` must be reachable from inside the container, where `127.0.0.1` points to the bot container itself.
 
@@ -135,13 +134,6 @@ docker compose down
 ```
 
 At `INFO`, logs show model loading and request progress. `DEBUG` adds download, transcription, and delivery details. When an error message includes a code, use it to find the corresponding `request_id` in the logs.
-
-<details>
-<summary>The container is unhealthy</summary>
-
-The Compose health check calls `python -m app.healthcheck`, and that module is missing from the current tree. Check the logs for `Polling started` and test with a voice message. The application reads `METRICS_PORT` and `TELEGRAM_HEALTH_INTERVAL_SECONDS`, but neither setting starts a listener or a health probe in the current version.
-
-</details>
 
 <details>
 <summary>The bot stays silent after a guest mention</summary>
