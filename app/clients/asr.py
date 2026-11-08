@@ -23,7 +23,7 @@ class ASR:
             wav_path = Path(directory) / "audio.wav"
             self._decode(audio_path, wav_path)
 
-            return " ".join(
+            return "\n\n".join(
                 text
                 for segment in self.model.recognize(wav_path)
                 if (text := segment.text.strip())

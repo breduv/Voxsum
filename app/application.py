@@ -3,6 +3,7 @@ from time import perf_counter
 
 from aiogram import Bot, Dispatcher
 from aiogram.client.session.aiohttp import AiohttpSession
+from aiogram.types import BotCommand
 from loguru import logger
 
 from app.agents.graph import build_graph
@@ -49,12 +50,14 @@ async def run_application(settings: Settings) -> None:
             dispatcher = _create_dispatcher(controller, view)
 
             async with _create_bot(settings).context() as bot:
-                allowed_updates = dispatcher.resolve_used_update_types()
-                await bot.delete_my_commands()
+                await bot.set_my_commands([
+                    BotCommand(command="start", description="Знакомство с ботом"),
+                    BotCommand(command="help", description="Как пользоваться ботом"),
+                ])
                 logger.info("Polling started")
                 await dispatcher.start_polling(
                     bot,
-                    allowed_updates=allowed_updates,
+                    allowed_updates=dispatcher.resolve_used_update_types(),
                     close_bot_session=False,
                 )
     finally:

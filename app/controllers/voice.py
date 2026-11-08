@@ -46,29 +46,32 @@ class VoiceController:
                     message.message_thread_id if message.is_topic_message else None
                 ),
             ):
-                summary = await self._summarize_voice(message.bot, voice)
+                summary, transcript = await self._summarize_voice(message.bot, voice)
                 logger.debug("Delivering summary")
-                await self.view.show_answer(message, summary)
+                await self.view.show_answer(message, summary, transcript)
             logger.info("Request delivered ({:.1f}s)", perf_counter() - started)
 
     async def handle_guest_voice(self, message: Message) -> None:
         started = perf_counter()
         request_id = f"tg:{message.chat.id}:{message.message_id}"
+        replied_message = message.reply_to_message
         with logger.contextualize(request_id=request_id):
             logger.info(
                 "Guest update received: query_present={}, voice_present={}, reply_present={}",
                 bool(message.guest_query_id),
                 message.voice is not None,
-                message.reply_to_message is not None,
+                replied_message is not None,
             )
             if not message.guest_query_id or message.bot is None:
                 logger.warning("Guest update ignored: missing query ID or bot context")
                 return
 
-            voice = message.voice or (
-                message.reply_to_message.voice if message.reply_to_message else None
-            )
+            voice = message.voice or (replied_message.voice if replied_message else None)
             if voice is None:
+                reply_author = replied_message.from_user if replied_message else None
+                if reply_author is not None and reply_author.id == message.bot.id:
+                    return
+
                 username = (await message.bot.me()).username
                 mention = f"@{username}" if username else "упоминанием бота"
                 await self.view.show_error(
@@ -80,9 +83,9 @@ class VoiceController:
             logger.info("Request started: guest voice ({}s)", voice.duration)
             inline_message_id = await self.view.show_guest_progress(message)
             try:
-                summary = await self._summarize_voice(message.bot, voice)
+                summary, transcript = await self._summarize_voice(message.bot, voice)
                 await self.view.show_answer(
-                    message, summary, inline_message_id=inline_message_id
+                    message, summary, transcript, inline_message_id=inline_message_id
                 )
             except Exception as error:  # noqa: BLE001
                 await report_request_error(
@@ -92,7 +95,7 @@ class VoiceController:
                 return
             logger.info("Request delivered ({:.1f}s)", perf_counter() - started)
 
-    async def _summarize_voice(self, bot: Bot, voice: Voice) -> str:
+    async def _summarize_voice(self, bot: Bot, voice: Voice) -> tuple[str, str]:
         if voice.file_size is not None and voice.file_size > MAX_VOICE_BYTES:
             raise VoiceLimitError("Voice file exceeds 20 MiB")
 
@@ -107,4 +110,5 @@ class VoiceController:
             logger.debug("Voice: download completed")
             transcript = await self.transcription.transcribe(audio_path)
 
-        return await self.chat.summarize(transcript.text)
+        summary = await self.chat.summarize(transcript.text)
+        return summary, transcript.text
